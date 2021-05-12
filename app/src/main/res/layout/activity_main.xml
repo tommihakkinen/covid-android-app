@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@color/purple_500"
+    android:orientation="vertical"
+    tools:context=".MainActivity">
+
+<!--    <ImageView-->
+<!--        android:id="@+id/map_base"-->
+<!--        android:layout_width="fill_parent"-->
+<!--        android:layout_height="fill_parent"-->
+<!--        android:layout_weight="1"-->
+
+<!--        app:srcCompat="@drawable/ic_colorbase" />-->
+
+<!--    <ImageView-->
+<!--        android:id="@+id/map"-->
+<!--        android:layout_width="fill_parent"-->
+<!--        android:layout_height="fill_parent"-->
+<!--        android:layout_weight="1"-->
+<!--        app:srcCompat="@drawable/kartta" />-->
+
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="match_parent"
+        android:layout_height="62dp"
+        android:paddingTop="100dp"
+        android:text="Everybody panic!"
+        android:background="@color/purple_500"
+        android:textSize="40dp"
+        android:layout_weight="1"
+        android:textAlignment="center"
+        android:layout_gravity="center_horizontal"
+        android:textColor="@color/white"/>
+
+    <TextView
+        android:id="@+id/allCases"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:textSize="100dp"
+        android:text=""
+        android:textAlignment="center"
+
+        android:textColor="@color/white"/>
+</LinearLayout>
