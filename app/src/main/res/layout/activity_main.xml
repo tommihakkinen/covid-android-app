@@ -59,7 +59,7 @@
         android:text="Hae oman kuntasi tartunnat"
         android:layout_gravity="center_horizontal"
         android:backgroundTint="@color/blue"
-        android:onClick="getDataByLocation"/>
+        android:onClick="onLocationButtonPressed"/>
 
     <Button
         android:id="@+id/button2"

@@ -19,6 +19,7 @@ class MapActivity : AppCompatActivity() {
     private lateinit var vaccinesText : TextView
     private val conn = ConnectionChecker()
 
+    // List of health care districts in Finland that includes their unique ids for data fetching.
     private val areaList : List<Area> = listOf(
             Area("445131","518327","Ahvenanmaa",R.id.ahvenanmaa,29789), Area("445197","518349","Varsinais-Suomi", R.id.varsinaissuomi, 481478),
             Area("445170","518366","Satakunta", R.id.satakunta, 218624), Area("445206","518340","Kanta-Häme", R.id.kantahame, 171364),
@@ -32,6 +33,7 @@ class MapActivity : AppCompatActivity() {
             Area("445190","518353","Länsi-Pohja", R.id.lansipohja, 61172), Area("445224","518322","Lappi", R.id.lappi, 117350),
             Area("445193","518320","Helsinki ja Uusimaa", R.id.uusimaa, 1667203))
 
+    // List of ImageView ids to handle their interactability.
     private val viewList : List<Int> = listOf(
             R.id.ahvenanmaa, R.id.varsinaissuomi, R.id.satakunta, R.id.kantahame, R.id.pirkanmaa, R.id.paijathame,
             R.id.kymenlaakso, R.id.etelakarjala, R.id.etelasavo, R.id.itasavo, R.id.pohjoiskarjala, R.id.pohjoissavo,
@@ -46,6 +48,7 @@ class MapActivity : AppCompatActivity() {
         areaText = findViewById(R.id.areaText)
         casesText = findViewById(R.id.casesText)
         vaccinesText = findViewById(R.id.vaccinesText)
+
         if (conn.isOnline(this)) {
             areaText.text = "Ladataan tietoja"
             fetchDataForAllAreas()
@@ -55,7 +58,9 @@ class MapActivity : AppCompatActivity() {
     }
 
     private fun fetchDataForAllAreas() {
+
         thread() {
+            // Fetches number of covid cases for all health care districts.
             for (i in areaList.indices) {
                 val json = getUrl(getCasesUrlWithSid(areaList[i].sidCases))
                 if (json.isNotEmpty()) {
@@ -63,7 +68,7 @@ class MapActivity : AppCompatActivity() {
                     areaList[i].cases = dataSet.getJSONObject("value").getString("105")
                 }
             }
-
+            // Fetches number of vaccinated people for all health care districts.
             for (i in areaList.indices) {
                 val json = getUrl(getVaccineUrlWithSid(areaList[i].sidVaccine))
                 if (json.isNotEmpty()) {
@@ -71,6 +76,7 @@ class MapActivity : AppCompatActivity() {
                     areaList[i].vaccines = dataSet.getJSONObject("value").getString("0")
                 }
             }
+            // Sets the ImageView for each health care district interactable.
             for (i in viewList.indices) {
                 val view = findViewById<View>(viewList[i])
                 view.setOnClickListener(MyListener())
@@ -88,6 +94,7 @@ class MapActivity : AppCompatActivity() {
         return inputStream.bufferedReader().use { it.readText() }
     }
 
+    // Returns the url with a district's unique id.
     private fun getCasesUrlWithSid(sid: String) : String {
         return "https://sampo.thl.fi/pivot/prod/fi/epirapo/covid19case/fact_epirapo_covid19case.json?row=hcdmunicipality2020-$sid.&column=dateweek20200101-509030&filter=measure-444833"
     }
@@ -96,6 +103,7 @@ class MapActivity : AppCompatActivity() {
         return "https://sampo.thl.fi/pivot/prod/fi/vaccreg/cov19cov/fact_cov19cov.json?row=hcdmunicipality2020-$sid.&column=dateweek20200101-509030&filter=measure-533170"
     }
 
+    // Common listener for all health care district images.
     inner class MyListener : View.OnClickListener {
 
         override fun onClick(v: View) {

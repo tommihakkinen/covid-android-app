@@ -65,7 +65,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun fetchData() {
-
+        // Fetches all registered covid cases in Finland.
         thread() {
             Log.d("Main", "Cases")
             val casesJson = getUrl(casesUrl)
@@ -82,7 +82,7 @@ class MainActivity : AppCompatActivity() {
                 connection = false
             }
         }
-
+        // Fetches all covid-related deaths in Finland.
         thread() {
             Log.d("Main", "Deaths")
             val deathsJson = getUrl(deathsUrl)
@@ -94,7 +94,7 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
-
+        // Fetches number of people who have received their first dose of covid vaccine in Finland.
         thread() {
             Log.d("Main", "Vaccines")
             val vaccinesJson = getUrl(vaccinatedUrl)
@@ -107,7 +107,7 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
-
+        // Fetches json that holds the unique ids for each Finnish city, used for fetching their local covid cases.
         thread() {
             var loop = true
             while(loop) {
@@ -154,6 +154,7 @@ class MainActivity : AppCompatActivity() {
     private val locationListener: LocationListener = object : LocationListener {
 
         override fun onLocationChanged(location: Location) {
+            // Gets name of the current city using device's location coordinates.
             thread() {
                 longitude = location.longitude
                 latitude = location.latitude
@@ -175,10 +176,12 @@ class MainActivity : AppCompatActivity() {
 
                 if (areaJsonArray.length() > 0) {
                     for (i in 0 until areaJsonArray.length()) {
+                        // Gets the array of cities inside a province
                         val area = areaJsonArray[i] as JSONObject
                         val citiesJsonArray = area.getJSONArray("children")
 
                         for (j in 0 until citiesJsonArray.length()) {
+                            // Compares the city names to the one received earlier with the device's location and picks up the city's id.
                             val cityObj = citiesJsonArray[j] as JSONObject
                             if (cityObj.getString("label") == city) {
                                 val sid = cityObj.getString("sid")
@@ -192,7 +195,8 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    fun getDataByLocation(v: View) {
+    // Requests location permissions and initiates fetch for covid cases in the current city by location.
+    fun onLocationButtonPressed(v: View) {
         if (conn.isOnline(this) && connection) {
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), 1)
@@ -207,6 +211,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    // Fetches covid cases for the city that was determined by device's location.
     fun getCityData(city: String, sid: String) {
         thread() {
             val casesJson = getUrl("https://sampo.thl.fi/pivot/prod/fi/epirapo/covid19case/fact_epirapo_covid19case.json?row=hcdmunicipality2020-$sid.&column=dateweek20200101-509030&filter=measure-444833")

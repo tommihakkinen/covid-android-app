@@ -5,6 +5,7 @@ import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.util.Log
 
+// Class for checking if the device has any type of internet connection.
 class ConnectionChecker {
 
     fun isOnline(context: Context): Boolean {

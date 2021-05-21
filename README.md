@@ -19,4 +19,4 @@ Release 2:
 
 Known bugs:
 - The district images in the map view are rectangles so the odd shaped ones' clickable areas can overlap with others, making them harder to press.
-- Map view fetches data every time it is opened and it takes a few seconds which can be irritating.
+- Location does not work in Ahvenanmaa.
