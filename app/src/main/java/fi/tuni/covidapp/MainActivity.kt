@@ -1,4 +1,4 @@
-package com.example.covidapp
+package fi.tuni.covidapp
 
 import android.Manifest
 import android.content.Context
@@ -48,13 +48,16 @@ class MainActivity : AppCompatActivity() {
         supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
         button = findViewById((R.id.button))
         button.isClickable = false
         casesView = findViewById(R.id.casesView)
         deathsView = findViewById(R.id.deathsView)
         vaccinatedView = findViewById(R.id.vaccinatedView)
+
         locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager;
 
+        // Initiates data fetching or offline mode based on internet status.
         if (conn.isOnline(this)) {
             fetchData()
         } else {
@@ -154,7 +157,7 @@ class MainActivity : AppCompatActivity() {
     private val locationListener: LocationListener = object : LocationListener {
 
         override fun onLocationChanged(location: Location) {
-            // Gets name of the current city using device's location coordinates.
+            // Gets the name of the current city using device's location coordinates.
             thread() {
                 longitude = location.longitude
                 latitude = location.latitude

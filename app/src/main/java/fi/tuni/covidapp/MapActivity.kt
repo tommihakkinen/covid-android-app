@@ -1,4 +1,4 @@
-package com.example.covidapp
+package fi.tuni.covidapp
 
 import android.os.Bundle
 import android.view.View
@@ -31,7 +31,8 @@ class MapActivity : AppCompatActivity() {
             Area("445079","518323","Vaasa", R.id.vaasa, 169684), Area("445230","518369","Keski-Pohjanmaa", R.id.keskipohjanmaa, 77689),
             Area("444996","518354","Pohjois-Pohjanmaa", R.id.pohjoispohjanmaa, 409418), Area("445101","518303","Kainuu", R.id.kainuu, 73061),
             Area("445190","518353","Länsi-Pohja", R.id.lansipohja, 61172), Area("445224","518322","Lappi", R.id.lappi, 117350),
-            Area("445193","518320","Helsinki ja Uusimaa", R.id.uusimaa, 1667203))
+            Area("445193","518320","Helsinki ja Uusimaa", R.id.uusimaa, 1667203)
+    )
 
     // List of ImageView ids to handle their interactability.
     private val viewList : List<Int> = listOf(

@@ -1,4 +1,4 @@
-package com.example.covidapp
+package fi.tuni.covidapp
 
 import android.content.Context
 import android.net.ConnectivityManager
