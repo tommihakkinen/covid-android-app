@@ -6,7 +6,6 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.*
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.view.Window
 import android.widget.Button
@@ -70,9 +69,8 @@ class MainActivity : AppCompatActivity() {
     private fun fetchData() {
         // Fetches all registered covid cases in Finland.
         thread() {
-            Log.d("Main", "Cases")
             val casesJson = getUrl(casesUrl)
-            if (casesJson.isNotEmpty()) {
+            if (isJSONValid(casesJson)) {
                 val dataSet = JSONObject(casesJson).getJSONObject("dataset")
                 val allCases = dataSet.getJSONObject("value").getString("2331")
                 runOnUiThread() {
@@ -87,9 +85,8 @@ class MainActivity : AppCompatActivity() {
         }
         // Fetches all covid-related deaths in Finland.
         thread() {
-            Log.d("Main", "Deaths")
             val deathsJson = getUrl(deathsUrl)
-            if (deathsJson.isNotEmpty()) {
+            if (isJSONValid(deathsJson)) {
                 val dataSet = JSONObject(deathsJson).getJSONObject("dataset")
                 val allDeaths = dataSet.getJSONObject("value").getString("9")
                 runOnUiThread() {
@@ -99,9 +96,8 @@ class MainActivity : AppCompatActivity() {
         }
         // Fetches number of people who have received their first dose of covid vaccine in Finland.
         thread() {
-            Log.d("Main", "Vaccines")
             val vaccinesJson = getUrl(vaccinatedUrl)
-            if (vaccinesJson.isNotEmpty()) {
+            if (isJSONValid(vaccinesJson)) {
                 val dataSet = JSONObject(vaccinesJson).getJSONObject("dataset")
                 val allVaccinated = dataSet.getJSONObject("value").getString("0")
                 val p: Double = allVaccinated.toDouble() / population * 100
@@ -114,14 +110,13 @@ class MainActivity : AppCompatActivity() {
         thread() {
             var loop = true
             while(loop) {
-                Log.d("Main", "Cities")
-                var citiesString = getUrl(citiesUrl)
-                if (citiesString.isNotEmpty()) {
-                    val index = citiesString.indexOf('[')
-                    citiesString = citiesString.substring(index + 1)
-                    val citiesJson = citiesString.dropLast(3)
-                    if (isJSONValid(citiesJson)) {
-                        areaJsonArray = JSONObject(citiesJson).getJSONArray("children").getJSONObject(0).getJSONArray("children")
+                var areasString = getUrl(citiesUrl)
+                if (areasString.isNotEmpty()) {
+                    val index = areasString.indexOf('[')
+                    areasString = areasString.substring(index + 1)
+                    val areasJson = areasString.dropLast(3)
+                    if (isJSONValid(areasJson)) {
+                        areaJsonArray = JSONObject(areasJson).getJSONArray("children").getJSONObject(0).getJSONArray("children")
                         button.isClickable = true
                         loop = false
                     }
@@ -154,7 +149,23 @@ class MainActivity : AppCompatActivity() {
         return true
     }
 
-    private val locationListener: LocationListener = object : LocationListener {
+    // Requests location permissions and initiates fetch for covid cases in the current city by location.
+    fun onLocationButtonPressed(v: View) {
+        if (conn.isOnline(this) && connection) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), 1)
+                return
+            }
+            button.text = "Haetaan..."
+            locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0f, locationListener);
+        } else if (conn.isOnline(this) && !connection) {
+            fetchData()
+            connection = true
+            button.text = "Hae oman kuntasi tartunnat"
+        }
+    }
+
+    private val locationListener : LocationListener = object : LocationListener {
 
         override fun onLocationChanged(location: Location) {
             // Gets the name of the current city using device's location coordinates.
@@ -188,29 +199,12 @@ class MainActivity : AppCompatActivity() {
                             val cityObj = citiesJsonArray[j] as JSONObject
                             if (cityObj.getString("label") == city) {
                                 val sid = cityObj.getString("sid")
-                                Log.d("Main", sid)
                                 getCityData(city, sid)
                             }
                         }
                     }
                 }
             }
-        }
-    }
-
-    // Requests location permissions and initiates fetch for covid cases in the current city by location.
-    fun onLocationButtonPressed(v: View) {
-        if (conn.isOnline(this) && connection) {
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), 1)
-                return
-            }
-            button.text = "Haetaan..."
-            locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0f, locationListener);
-        } else if (conn.isOnline(this) && !connection) {
-            fetchData()
-            connection = true
-            button.text = "Hae oman kuntasi tartunnat"
         }
     }
 
@@ -236,12 +230,9 @@ class MainActivity : AppCompatActivity() {
             1 -> {
                 if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     if ((ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED)) {
-                        Log.d("Main", "Permission granted")
                         button.text = "Haetaan..."
                         locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0f, locationListener);
                     }
-                } else {
-                    Log.d("Main", "Permission denied")
                 }
                 return
             }

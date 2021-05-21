@@ -3,7 +3,6 @@ package fi.tuni.covidapp
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
-import android.util.Log
 
 // Class for checking if the device has any type of internet connection.
 class ConnectionChecker {
@@ -13,13 +12,10 @@ class ConnectionChecker {
         val capabilities = connectivityManager.getNetworkCapabilities(connectivityManager.activeNetwork)
         if (capabilities != null) {
             if (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)) {
-                Log.d("Internet", "NetworkCapabilities.TRANSPORT_CELLULAR")
                 return true
             } else if (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)) {
-                Log.d("Internet", "NetworkCapabilities.TRANSPORT_WIFI")
                 return true
             } else if (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET)) {
-                Log.d("Internet", "NetworkCapabilities.TRANSPORT_ETHERNET")
                 return true
             }
         }
