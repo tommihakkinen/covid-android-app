@@ -58,14 +58,18 @@ class MapActivity : AppCompatActivity() {
         thread() {
             for (i in areaList.indices) {
                 val json = getUrl(getCasesUrlWithSid(areaList[i].sidCases))
-                val dataSet = JSONObject(json).getJSONObject("dataset")
-                areaList[i].cases = dataSet.getJSONObject("value").getString("105")
+                if (json.isNotEmpty()) {
+                    val dataSet = JSONObject(json).getJSONObject("dataset")
+                    areaList[i].cases = dataSet.getJSONObject("value").getString("105")
+                }
             }
 
             for (i in areaList.indices) {
                 val json = getUrl(getVaccineUrlWithSid(areaList[i].sidVaccine))
-                val dataSet = JSONObject(json).getJSONObject("dataset")
-                areaList[i].vaccines = dataSet.getJSONObject("value").getString("0")
+                if (json.isNotEmpty()) {
+                    val dataSet = JSONObject(json).getJSONObject("dataset")
+                    areaList[i].vaccines = dataSet.getJSONObject("value").getString("0")
+                }
             }
             for (i in viewList.indices) {
                 val view = findViewById<View>(viewList[i])
